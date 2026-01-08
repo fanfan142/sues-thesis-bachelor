@@ -25,41 +25,57 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 \newcommand{\liuhao}{\fontsize{7.5pt}{11.25pt}\selectfont}
 % -----------------------------------------------------------------
 \LoadClass[UTF8,a4paper,cs4size,zihao=-4,linespread=1.5,space=auto,oneside]{ctexart}
+% 载入默认配置（用户可在导言区覆盖）
+\makeatletter
+\InputIfFileExists{suesthesis.cfg}{}{}
+\makeatother
 % 正文内容，中文宋体，英文、数字和符号Times New Roman，小四号字，1.5倍行距，标准字间距。
 \RequirePackage{fontspec}
-%设置英文字体
-\setmainfont{Times New Roman}[
-    BoldFont = Times New Roman Bold,
-    ItalicFont = Times New Roman Italic,
-    BoldItalicFont = Times New Roman Bold Italic
-]
-
-\setsansfont{Times New Roman}[
-    BoldFont = Times New Roman Bold,
-    ItalicFont = Times New Roman Italic,
-    BoldItalicFont = Times New Roman Bold Italic
-]
-
-\setmonofont{Times New Roman}[
-    BoldFont = Times New Roman Bold,
-    ItalicFont = Times New Roman Italic,
-    BoldItalicFont = Times New Roman Bold Italic
-]
+% 设置字体（支持跨平台回退）
+\newcommand{\suesthesis@fallbackfont}[3]{%
+    \IfFontExistsTF{#1}{#2{#1}}{#2{#3}}%
+}
+\newcommand{\suesthesis@setmainfont}[1]{%
+    \setmainfont{#1}[
+        BoldFont = #1 Bold,
+        ItalicFont = #1 Italic,
+        BoldItalicFont = #1 Bold Italic
+    ]%
+}
+\newcommand{\suesthesis@setsansfont}[1]{%
+    \setsansfont{#1}[
+        BoldFont = #1 Bold,
+        ItalicFont = #1 Italic,
+        BoldItalicFont = #1 Bold Italic
+    ]%
+}
+\newcommand{\suesthesis@setmonofont}[1]{%
+    \setmonofont{#1}[
+        BoldFont = #1 Bold,
+        ItalicFont = #1 Italic,
+        BoldItalicFont = #1 Bold Italic
+    ]%
+}
+\newcommand{\suesthesis@setcodefont}[1]{%
+    \def\suesthesis@codefont{\fontspec{#1}}%
+}
+\suesthesis@fallbackfont{\suesthesis@font@Main}{\suesthesis@setmainfont}{TeX Gyre Termes}
+\suesthesis@fallbackfont{\suesthesis@font@Sans}{\suesthesis@setsansfont}{TeX Gyre Termes}
+\suesthesis@fallbackfont{\suesthesis@font@Mono}{\suesthesis@setmonofont}{Latin Modern Mono}
+\suesthesis@fallbackfont{\suesthesis@font@Mono}{\suesthesis@setcodefont}{Latin Modern Mono}
 % 设置字体
 % 宋体
-\setCJKfamilyfont{zhsong}[AutoFakeBold = {2.17}]{SimSun}
+\suesthesis@fallbackfont{\suesthesis@font@CJKSong}{\setCJKfamilyfont{zhsong}[AutoFakeBold = {2.17}]}{STSong}
 % MacOS 设置为下面情形：
 % \setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{STSong}
 \renewcommand*{\songti}{\CJKfamily{zhsong}}
 % 黑体
-\setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{SimHei}
+\suesthesis@fallbackfont{\suesthesis@font@CJKHei}{\setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]}{STHeiti}
 % MacOS 设置为下面情形：
 % \setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{STHei}
 \renewcommand*{\heiti}{\CJKfamily{zhhei}}
 % 设置文章中主字体
-\setCJKmainfont[AutoFakeBold]{SimSun}
-% MacOS 设置为下面情形：
-% \setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{STSong}
+\suesthesis@fallbackfont{\suesthesis@font@CJKMain}{\setCJKmainfont[AutoFakeBold]}{STSong}
 % MacOS 这里设置的是 STSongti-SC-Regular，注意修改
 
 % 每行缩进两个汉字
@@ -169,7 +185,6 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
     citecolor=black
 }
 % 双排表格、图表标题
-
 \RequirePackage[justification=centering]{caption}
 \renewcommand{\captionfont}{\zihao{5}\kaishu}
 \captionsetup[longtable]{name=表,labelsep=space}
@@ -250,29 +265,19 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 \crefname{solution}{解}{解}
 %-----------------------------------------
 \RequirePackage{float}
-% 设置浮动体的标题
-\RequirePackage{caption}
 % 设置插入的表格
 \RequirePackage{tabularx,array}
-% 具有不同颜色的表格
-\RequirePackage{colortbl}
 %% 长表格
 \RequirePackage{longtable}
-\RequirePackage{threeparttablex}
 % 用于插入表格当中斜线
 \RequirePackage{diagbox}
 % 设置插入的三线表
 \RequirePackage{booktabs}
-\RequirePackage{makecell}                 % 三线表-竖线
 %% 支持在表格中跨行、跨列
 \RequirePackage{multirow}
 \RequirePackage{multicol}
-%% 调整间隔, 让表格更好看些
-\RequirePackage{bigstrut}
-%% 在跨行表格中输入定界符
-\RequirePackage{bigdelim}
-% 保护脆落命令
-\RequirePackage{cprotect}
+% 具有不同颜色的表格
+\RequirePackage{colortbl}
 %% 设置插入的图片
 \RequirePackage{graphicx}
 
@@ -285,8 +290,6 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 \RequirePackage{xcolor,color}
 % 用于设置
 \RequirePackage{pifont}       % \ding{xx}
-\RequirePackage{bbding}       % \Checkmark,\XSolid,... (需要和pifont宏包共同使用)
-\RequirePackage{fontawesome}  % \faCheck,\faTimes
 % 采用如下宏定义更方便
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
@@ -348,7 +351,7 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 		keywordstyle=\color{mKeyword},% 设置关键词样式
 		stringstyle=\color{mString},% 设置字符串样式
 		commentstyle=\songti\color{mComment},% 设置注释样式
-        basicstyle=\footnotesize\fontspec{Consolas}, % 设置代码字体
+        basicstyle=\footnotesize\suesthesis@codefont, % 设置代码字体
         frame=shadowbox, % 阴影效果
         rulesepcolor= \color{ red!20!green!20!blue!20},
 		#1
@@ -371,7 +374,7 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 		morekeywords=[2]{print},% 将特定单词加入Builtins中
 		stringstyle=\color{pString},% 设置字符串样式
 		commentstyle=\songti\color{pComment},% 设置注释样式	
-        basicstyle=\footnotesize\fontspec{Consolas}, % 设置代码字体
+        basicstyle=\footnotesize\suesthesis@codefont, % 设置代码字体
         frame=shadowbox, % 阴影效果
         rulesepcolor= \color{ red!20!green!20!blue!20} ,
 		#1
@@ -388,7 +391,7 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 		morekeywords={*,define,*,include...},% 将特定单词加入Kewords中
 		stringstyle=\color{purple},% 设置字符串样式
 		commentstyle=\songti\color{pComment},% 设置注释样式	
-        basicstyle=\footnotesize\fontspec{Consolas}, % 设置代码字体
+        basicstyle=\footnotesize\suesthesis@codefont, % 设置代码字体
         frame=shadowbox, % 阴影效果
         rulesepcolor= \color{ red!20!green!20!blue!20} ,
         tabsize=4,
@@ -406,7 +409,7 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 		morekeywords={*,define,*,include...},% 将特定单词加入Kewords中
 		stringstyle=\color{purple},% 设置字符串样式
 		commentstyle=\songti\color{pComment},% 设置注释样式	
-        basicstyle=\footnotesize\fontspec{Consolas}, % 设置代码字体
+        basicstyle=\footnotesize\suesthesis@codefont, % 设置代码字体
         frame=shadowbox, % 阴影效果
         rulesepcolor= \color{ red!20!green!20!blue!20} ,
         tabsize=4,
@@ -423,7 +426,7 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 		keywordstyle=\color{blue},
 		stringstyle=\color{purple},% 设置字符串样式
 		commentstyle=\songti\color{pComment},% 设置注释样式	
-        basicstyle=\footnotesize\fontspec{Consolas}, % 设置代码字体
+        basicstyle=\footnotesize\suesthesis@codefont, % 设置代码字体
         frame=shadowbox, % 阴影效果
         rulesepcolor= \color{ red!20!green!20!blue!20} ,
         tabsize=4,
@@ -460,7 +463,4 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 % \renewcommand\appendix{\appendixname}
 
 %---------------------------------------------------------
-% 文档开始导入默认配置
-\AtBeginDocument{\makeatletter\input{suesthesis.cfg}\makeatother}
-
 \endinput
