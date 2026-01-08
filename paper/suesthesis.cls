@@ -27,6 +27,25 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 \LoadClass[UTF8,a4paper,cs4size,zihao=-4,linespread=1.5,space=auto,oneside]{ctexart}
 % 正文内容，中文宋体，英文、数字和符号Times New Roman，小四号字，1.5倍行距，标准字间距。
 \RequirePackage{fontspec}
+\makeatletter
+\newcommand{\suesthesis@fallbackfonts}[2]{%
+    \suesthesis@fallbackfonts@check{#2}{#1}%
+}
+\newcommand{\suesthesis@fallbackfonts@check}[2]{%
+    \IfFontExistsTF{#2}{#1{#2}}{%
+        \@ifnextchar\bgroup{\suesthesis@fallbackfonts@check{#1}}{#1{#2}}%
+    }%
+}
+\newcommand{\suesthesis@setCJKfamilyfont@zhsong}[1]{%
+    \setCJKfamilyfont{zhsong}[AutoFakeBold = {2.17}]{#1}%
+}
+\newcommand{\suesthesis@setCJKfamilyfont@zhhei}[1]{%
+    \setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{#1}%
+}
+\newcommand{\suesthesis@setCJKmainfont}[1]{%
+    \setCJKmainfont[AutoFakeBold]{#1}%
+}
+\makeatother
 %设置英文字体
 \setmainfont{Times New Roman}[
     BoldFont = Times New Roman Bold,
@@ -47,20 +66,16 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 ]
 % 设置字体
 % 宋体
-\setCJKfamilyfont{zhsong}[AutoFakeBold = {2.17}]{SimSun}
-% MacOS 设置为下面情形：
-% \setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{STSong}
+\suesthesis@fallbackfonts{SimSun}{\suesthesis@setCJKfamilyfont@zhsong}%
+    {STSong}{Source Han Serif SC}{Noto Serif CJK SC}
 \renewcommand*{\songti}{\CJKfamily{zhsong}}
 % 黑体
-\setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{SimHei}
-% MacOS 设置为下面情形：
-% \setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{STHei}
+\suesthesis@fallbackfonts{SimHei}{\suesthesis@setCJKfamilyfont@zhhei}%
+    {STHeiti}{Source Han Sans SC}{Noto Sans CJK SC}
 \renewcommand*{\heiti}{\CJKfamily{zhhei}}
 % 设置文章中主字体
-\setCJKmainfont[AutoFakeBold]{SimSun}
-% MacOS 设置为下面情形：
-% \setCJKfamilyfont{zhhei}[AutoFakeBold = 2.17]{STSong}
-% MacOS 这里设置的是 STSongti-SC-Regular，注意修改
+\suesthesis@fallbackfonts{SimSun}{\suesthesis@setCJKmainfont}%
+    {STSong}{Source Han Serif SC}{Noto Serif CJK SC}
 
 % 每行缩进两个汉字
 \setlength\parindent{2em}
