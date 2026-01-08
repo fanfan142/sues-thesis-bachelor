@@ -47,23 +47,49 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 }
 \makeatother
 %设置英文字体
-\setmainfont{Times New Roman}[
-    BoldFont = Times New Roman Bold,
-    ItalicFont = Times New Roman Italic,
-    BoldItalicFont = Times New Roman Bold Italic
-]
+\makeatletter
+\newcommand{\suesthesis@addfontoption}[1]{%
+    \ifx\suesthesis@fontoptions\@empty
+        \def\suesthesis@fontoptions{#1}%
+    \else
+        \edef\suesthesis@fontoptions{\suesthesis@fontoptions, #1}%
+    \fi
+}
+\newcommand{\suesthesis@buildfontoptions}[1]{%
+    \def\suesthesis@fontoptions{}%
+    \IfFontExistsTF{#1 Bold}{\suesthesis@addfontoption{BoldFont = #1 Bold}}{}%
+    \IfFontExistsTF{#1 Italic}{\suesthesis@addfontoption{ItalicFont = #1 Italic}}{}%
+    \IfFontExistsTF{#1 Bold Italic}{\suesthesis@addfontoption{BoldItalicFont = #1 Bold Italic}}{}%
+}
+\newcommand{\suesthesis@setmainfont}[1]{%
+    \suesthesis@buildfontoptions{#1}%
+    \ifx\suesthesis@fontoptions\@empty
+        \setmainfont{#1}%
+    \else
+        \setmainfont{#1}[\suesthesis@fontoptions]%
+    \fi
+}
+\newcommand{\suesthesis@setsansfont}[1]{%
+    \suesthesis@buildfontoptions{#1}%
+    \ifx\suesthesis@fontoptions\@empty
+        \setsansfont{#1}%
+    \else
+        \setsansfont{#1}[\suesthesis@fontoptions]%
+    \fi
+}
+\newcommand{\suesthesis@setmonofont}[1]{%
+    \suesthesis@buildfontoptions{#1}%
+    \ifx\suesthesis@fontoptions\@empty
+        \setmonofont{#1}%
+    \else
+        \setmonofont{#1}[\suesthesis@fontoptions]%
+    \fi
+}
+\makeatother
 
-\setsansfont{Times New Roman}[
-    BoldFont = Times New Roman Bold,
-    ItalicFont = Times New Roman Italic,
-    BoldItalicFont = Times New Roman Bold Italic
-]
-
-\setmonofont{Times New Roman}[
-    BoldFont = Times New Roman Bold,
-    ItalicFont = Times New Roman Italic,
-    BoldItalicFont = Times New Roman Bold Italic
-]
+\suesthesis@setmainfont{Times New Roman}
+\suesthesis@setsansfont{Times New Roman}
+\suesthesis@setmonofont{Times New Roman}
 % 设置字体
 % 宋体
 \suesthesis@fallbackfonts{SimSun}{\suesthesis@setCJKfamilyfont@zhsong}%
