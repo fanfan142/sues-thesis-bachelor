@@ -70,7 +70,12 @@ make wordcount          # 论文字数统计
 git clone https://github.com/mobtgzhang/sues-thesis-bachelor.git
 ```
 ### 可能出现的一些问题
-Linux和MacOS可能会出现字体问题，解决的方法可以修改`cls`中`setCJKmainfont`字体，将`SimSun`修改为`STSongti-SC-Regular`字体。
+Linux 和 MacOS 可能会出现字体问题，本模板会按以下顺序自动回退中文字体：
+
++ 宋体：`SimSun → STSong → Source Han Serif SC → Noto Serif CJK SC`
++ 黑体：`SimHei → STHeiti → Source Han Sans SC → Noto Sans CJK SC`
+
+如需手动指定字体，可在 `paper/suesthesis.cls` 中替换上述回退序列的字体名称。
 
 Linux由于缺少Windows字体，可以使用下面的方法添加Windows字体到Linux系统当中。
 ```bash
