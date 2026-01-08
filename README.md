@@ -21,6 +21,30 @@
 
 项目包含有三个文件夹，分别是开题报告（`report`）、答辩ppt（`ppt`、`beamer`）和论文模板（`paper`）。
 
+### 字体覆盖入口
+字体覆盖入口位于 `paper/suesthesis.cfg`，可在主文档导言区调用以下命令覆盖默认字体：
+
+新增命令示例：
+```tex
+\MainFont{...}
+\SansFont{...}
+\MonoFont{...}
+\CJKMainFont{...}
+\CJKSongFont{...}
+\CJKHeiFont{...}
+```
+
+示例片段（在主文档导言区设置字体）：
+```tex
+% 在主文档导言区（\documentclass 之后）
+\MainFont{Times New Roman}
+\SansFont{Arial}
+\MonoFont{Consolas}
+\CJKMainFont{STSongti-SC-Regular}
+\CJKSongFont{STSongti-SC-Regular}
+\CJKHeiFont{STHeitiSC-Medium}
+```
+
 ### Linux/MacOS/FreeBSD/用户使用方法
 推荐使用`Makefile`对latex模板进行编译，具体提供了以下几条可用的命令：
 ```bash
@@ -75,4 +99,3 @@ overleaf 需要将源码导入到自己的项目当中，上述链接是只读�
 + [GBT7714-2015标准下的BibTex样式](https://github.com/zepinglee/gbt7714-bibtex-style)
 + [上海交通大学latex模板](https://github.com/sjtug/SJTUThesis)
 + 清华大学学位论文latex模板
-
